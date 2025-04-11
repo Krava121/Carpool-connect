@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NITC Carpool Connect - Driver Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .header {
+            background-color: #003366;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        .logo {
+            height: 60px;
+            margin-right: 15px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #003366;
+            border-color: #003366;
+        }
+        .btn-primary:hover {
+            background-color: #002244;
+            border-color: #002244;
+        }
+        .request-card {
+            border-left: 5px solid #003366;
+            transition: transform 0.2s;
+        }
+        .request-card:hover {
+            transform: translateY(-5px);
+        }
+        .vehicle-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .tab-content {
+            padding: 20px;
+            background-color: white;
+            border-radius: 0 0 10px 10px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+        }
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+            color: #003366;
+        }
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+        .badge-section {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        .driver-stats {
+            padding: 15px;
+            background-color: #e9f0f8;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .stats-box {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #003366;
+        }
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .ride-filter {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .accepted-rides {
+            border-left: 5px solid #28a745;
+        }
+        .completed-rides {
+            border-left: 5px solid #6c757d;
+        }
+        .booking-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        body {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+                              url('https://nitc.ac.in/xc-assets/images/thumb/life-at-nitc-video.webp');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        .status-pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .status-accepted {
+            background-color: #28a745;
+            color: white;
+        }
+        .status-completed {
+            background-color: #6c757d;
+            color: white;
+        }
+        .status-canceled {
+            background-color: #dc3545;
+            color: white;
+        }
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            object-fit: cover;
+            border: 3px solid #003366;
+        }
+        .vehicle-details {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .earnings-chart {
+            height: 200px;
+            margin-bottom: 20px;
+        }
+        .modal-vehicle-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header text-center">
+        <div class="container">
+            <img src="https://images.seeklogo.com/logo-png/45/1/national-institute-of-technology-calicut-logo-png_seeklogo-458279.png" alt="NITC Logo" class="logo">
+            <h1>NITC Carpool Connect</h1>
+            <p class="lead">Driver Portal - Accept rides and connect with NITC students</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <ul class="nav nav-tabs" id="driverTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="available-rides-tab" data-bs-toggle="tab" data-bs-target="#available-rides" type="button" role="tab">Available Rides</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="my-rides-tab" data-bs-toggle="tab" data-bs-target="#my-rides" type="button" role="tab">My Rides</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">Driver Profile</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="earnings-tab" data-bs-toggle="tab" data-bs-target="#earnings" type="button" role="tab">Earnings</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="driverTabContent">
+            <!-- Available Rides Tab -->
+            <div class="tab-pane fade show active" id="available-rides" role="tabpanel">
+                <h2>Available Ride Requests</h2>
+                
+                <div class="ride-filter">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="dateFilter" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="dateFilter">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="locationFilter" class="form-label">Location</label>
+                            <select class="form-select" id="locationFilter">
+                                <option value="">All Locations</option>
+                                <option value="Calicut Airport">Calicut Airport</option>
+                                <option value="Kozhikode Railway Station">Kozhikode Railway Station</option>
+                                <option value="Kannur Airport">Kannur Airport</option>
+                                <option value="NITC Main Gate">NITC Main Gate</option>
+                                <option value="NITC Hostel Area">NITC Hostel Area</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="directionFilter" class="form-label">Direction</label>
+                            <select class="form-select" id="directionFilter">
+                                <option value="">All Directions</option>
+                                <option value="To NITC">To NITC</option>
+                                <option value="From NITC">From NITC</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="passengerCountFilter" class="form-label">Passenger Count</label>
+                            <select class="form-select" id="passengerCountFilter">
+                                <option value="">Any</option>
+                                <option value="1">1 Passenger</option>
+                                <option value="2">2 Passengers</option>
+                                <option value="3+">3+ Passengers</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-end mt-3">
+                        <button class="btn btn-primary" id="applyFilter">Apply Filter</button>
+                        <button class="btn btn-outline-secondary" id="resetFilter">Reset</button>
+                    </div>
+                </div>
+
+                <div id="availableRidesList">
+                    <!-- Ride Request 1 -->
+                    <div class="card request-card mb-3" data-ride-id="1" data-date="2025-04-12" data-time="14:30" data-location="Calicut Airport" data-direction="To NITC" data-passengers="3" data-vehicle="sedan">
+                        <div class="card-body">
+                            <div class="badge-section">
+                                <span class="badge status-pending">Pending</span>
+                                <span class="badge bg-info ms-1">3 passengers</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <h5>To NITC: Calicut Airport → NITC Main Gate</h5>
+                                    <p><strong>Date/Time:</strong> April 12, 2025 at 14:30</p>
+                                    <div class="mb-2">
+                                        <span class="badge bg-light text-dark">Priya Sharma (Female, 2nd Year)</span>
+                                        <span class="badge bg-light text-dark">Arjun Nair (Male, 3rd Year)</span>
+                                        <span class="badge bg-light text-dark">Sneha Menon (Female, 1st Year)</span>
+                                    </div>
+                                    <p><strong>Baggage:</strong> 2 Medium, 1 Small</p>
+                                    <p><small class="booking-time">Requested: 2 hours ago</small></p>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="vehicle-icon">🚗</div>
+                                    <h5>Sedan Required</h5>
+                                    <p>Est. Fare: ₹650</p>
+                                    <p>Distance: 28 km</p>
+                                </div>
+                                <div class="col-md-2 d-flex flex-column justify-content-center">
+                                    <button class="btn btn-primary mb-2 accept-ride">Accept Ride</button>
+                                    <button class="btn btn-outline-secondary view-details">Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ride Request 2 -->
+                    <div class="card request-card mb-3" data-ride-id="2" data-date="2025-04-11" data-time="09:15" data-location="NITC Hostel Area" data-direction="From NITC" data-passengers="1" data-vehicle="auto">
+                        <div class="card-body">
+                            <div class="badge-section">
+                                <span class="badge status-pending">Pending</span>
+                                <span class="badge bg-info ms-1">1 passenger</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <h5>From NITC: NITC Hostel Area → Kozhikode Railway Station</h5>
+                                    <p><strong>Date/Time:</strong> April 11, 2025 at 09:15</p>
+                                    <div class="mb-2">
+                                        <span class="badge bg-light text-dark">Rahul Nair (Male, PG)</span>
+                                    </div>
+                                    <p><strong>Baggage:</strong> 1 Large</p>
+                                    <p><small class="booking-time">Requested: 5 hours ago</small></p>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="vehicle-icon">🛺</div>
+                                    <h5>Auto Suitable</h5>
+                                    <p>Est. Fare: ₹350</p>
+                                    <p>Distance: 15 km</p>
+                                </div>
+                                <div class="col-md-2 d-flex flex-column justify-content-center">
+                                    <button class="btn btn-primary mb-2 accept-ride">Accept Ride</button>
+                                    <button class="btn btn-outline-secondary view-details">Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ride Request 3 -->
+                    <div class="card request-card mb-3" data-ride-id="3" data-date="2025-04-15" data-time="06:45" data-location="NITC Main Gate" data-direction="From NITC" data-passengers="4" data-vehicle="suv">
+                        <div class="card-body">
+                            <div class="badge-section">
+                                <span class="badge status-pending">Pending</span>
+                                <span class="badge bg-info ms-1">4 passengers</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <h5>From NITC: NITC Main Gate → Kannur Airport</h5>
+                                    <p><strong>Date/Time:</strong> April 15, 2025 at 06:45</p>
+                                    <div class="mb-2">
+                                        <span class="badge bg-light text-dark">Aditya Menon (Male, 4th Year)</span>
+                                        <span class="badge bg-light text-dark">Maya Krishnan (Female, 3rd Year)</span>
+                                        <span class="badge bg-light text-dark">Vijay Kumar (Male, 2nd Year)</span>
+                                        <span class="badge bg-light text-dark">Deepa Nair (Female, 4th Year)</span>
+                                    </div>
+                                    <p><strong>Baggage:</strong> 2 Large, 2 Medium</p>
+                                    <p><small class="booking-time">Requested: 1 day ago</small></p>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="vehicle-icon">🚙</div>
+                                    <h5>SUV Required</h5>
+                                    <p>Est. Fare: ₹1,100</p>
+                                    <p>Distance: 85 km</p>
+                                </div>
+                                <div class="col-md-2 d-flex flex-column justify-content-center">
+                                    <button class="btn btn-primary mb-2 accept-ride">Accept Ride</button>
+                                    <button class="btn btn-outline-secondary view-details">Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Rides Tab -->
+            <div class="tab-pane fade" id="my-rides" role="tabpanel">
+                <h2>My Rides</h2>
+                
+                <div class="ride-filter">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <select class="form-select" id="rideStatusFilter">
+                                <option value="">All Rides</option>
+                                <option value="accepted">Accepted</option>
+                                <option value="completed">Completed</option>
+                                <option value="canceled">Canceled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="date" class="form-control" id="rideDate" placeholder="Filter by date">
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-primary btn-sm" id="applyRideFilter">Apply</button>
+                            <button class="btn btn-outline-secondary btn-sm" id="resetRideFilter">Reset</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="myRidesList">
+                    <!-- Accepted Ride -->
+                    <div class="card request-card accepted-rides mb-3" data-ride-id="4" data-status="accepted" data-date="2025-04-10">
+                        <div class="card-body">
+                            <div class="badge-section">
+                                <span class="badge status-accepted">Accepted</span>
+                                <span class="badge bg-info ms-1">2 passengers</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <h5>To NITC: Kozhikode Railway Station → NITC Hostel Area</h5>
+                                    <p><strong>Date/Time:</strong> April 10, 2025 at 18:30 (Today)</p>
+                                    <div class="mb-2">
+                                        <span class="badge bg-light text-dark">Anoop Menon (Male, 3rd Year)</span>
+                                        <span class="badge bg-light text-dark">Divya Prakash (Female, 2nd Year)</span>
+                                    </div>
+                                    <p><strong>Contact:</strong> 9876543210, 9876543211</p>
+                                    <p><strong>Pickup Instructions:</strong> Meet at the main entrance of the railway station</p>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="vehicle-icon">🚗</div>
+                                    <h5>Sedan</h5>
+                                    <p>Est. Fare: ₹500</p>
+                                    <p>Distance: 22 km</p>
+                                </div>
+                                <div class="col-md-2 d-flex flex-column justify-content-center">
+                                    <button class="btn btn-success mb-2 start-ride">Start Ride</button>
+                                    <button class="btn btn-outline-danger mb-2 cancel-ride">Cancel Ride</button>
+                                    <button class="btn btn-outline-secondary contact-passengers">Contact</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Completed Ride -->
+                    <div class="card request-card completed-rides mb-3" data-ride-id="5" data-status="completed" data-date="2025-04-08">
+                        <div class="card-body">
+                            <div class="badge-section">
+                                <span class="badge status-completed">Completed</span>
+                                <span class="badge bg-info ms-1">3 passengers</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <h5>From NITC: NITC Main Gate → Calicut Airport</h5>
+                                    <p><strong>Date/Time:</strong> April 8, 2025 at 13:45</p>
+                                    <div class="mb-2">
+                                        <span class="badge bg-light text-dark">Ravi Kumar (Male, 4th Year)</span>
+                                        <span class="badge bg-light text-dark">Neha Menon (Female, 4th Year)</span>
+                                        <span class="badge bg-light text-dark">Sanjay Verma (Male, 4th Year)</span>
+                                    </div>
+                                    <p><strong>Fare Collected:</strong> ₹700</p>
+                                    <p><strong>Rating:</strong> ★★★★★ (5.0)</p>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="vehicle-icon">🚗</div>
+                                    <h5>Sedan</h5>
+                                    <p>Distance: 28 km</p>
+                                    <p>Duration: 42 min</p>
+                                </div>
+                                <div class="col-md-2 d-flex flex-column justify-content-center">
+                                    <button class="btn btn-outline-secondary mb-2 view-ride-details">View Details</button>
+                                    <button class="btn btn-outline-secondary view-invoice">Invoice</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Canceled Ride -->
+                    <div class="card request-card mb-3" data-ride-id="6" data-status="canceled" data-date="2025-04-05">
+                        <div class="card-body">
+                            <div class="badge-section">
+                                <span class="badge status-canceled">Canceled</span>
+                                <span class="badge bg-info ms-1">1 passenger</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <h5>To NITC: Calicut Airport → NITC Main Gate</h5>
+                                    <p><strong>Date/Time:</strong> April 5, 2025 at 10:30</p>
+                                    <div class="mb-2">
+                                        <span class="badge bg-light text-dark">Shreya P. (Female, PG)</span>
+                                    </div>
+                                    <p><strong>Cancellation Reason:</strong> Flight delay by 5 hours</p>
+                                    <p><strong>Canceled at:</strong> April 5, 2025, 9:15 AM</p>
+                                </div>
+                                <div class="col-md-3 text-center">
+                                    <div class="vehicle-icon">🛺</div>
+                                    <h5>Auto</h5>
+                                    <p>Est. Fare: ₹350</p>
+                                    <p>Cancellation Fee: ₹0</p>
+                                </div>
+                                <div class="col-md-2 d-flex flex-column justify-content-center">
+                                    <button class="btn btn-outline-secondary view-ride-details">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div class="tab-pane fade" id="profile" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Driver Photo" class="profile-img mb-3">
+                                <h3>Rajesh Kumar</h3>
+                                <p class="text-muted">Driver ID: NITC-DR-4582</p>
+                                <div class="mt-3">
+                                    <span class="badge bg-success p-2">4.8 ★★★★★</span>
+                                    <span class="badge bg-primary p-2">Verified</span>
+                                </div>
+                                <div class="d-grid gap-2 mt-3">
+                                    <button class="btn btn-outline-primary" id="editProfileBtn">Edit Profile</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Driver Stats</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <div class="stats-box">
+                                            <div class="stat-value">127</div>
+                                            <div class="stat-label">TOTAL RIDES</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <div class="stats-box">
+                                            <div class="stat-value">4.8</div>
+                                            <div class="stat-label">AVG RATING</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <div class="stats-box">
+                                            <div class="stat-value">98%</div>
+                                            <div class="stat-label">COMPLETION</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <div class="stats-box">
+                                            <div class="stat-value">3254</div>
+                                            <div class="stat-label">TOTAL KM</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Personal Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="profileForm">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="fullName" class="form-label">Full Name</label>
+                                            <input type="text" class="form-control" id="fullName" value="Rajesh Kumar" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="phone" class="form-label">Phone Number</label>
+                                            <input type="tel" class="form-control" id="phone" value="9876543200" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email" value="riderrajesh@gmail.com" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="dob" class="form-label">Date of Birth</label>
+                                            <input type="date" class="form-control" id="dob" value="1985-05-15" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <label for="address" class="form-label">Address</label>
+                                            <textarea class="form-control" id="address" rows="2" readonly>123 Main Street, Calicut, Kerala, 673601</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="d-none" id="profileFormButtons">
+                                        <button type="button" class="btn btn-primary" id="saveProfile">Save Changes</button>
+                                        <button type="button" class="btn btn-outline-secondary" id="cancelEditProfile">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Vehicle Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="vehicle-details">
+                                            <div class="text-center mb-2">
+                                                <span class="vehicle-icon">🚗</span>
+                                                <h5>Sedan</h5>
+                                            </div>
+                                            <p><strong>Make:</strong> Maruti Suzuki</p>
+                                            <p><strong>Model:</strong> Dzire</p>
+                                            <p><strong>Year:</strong> 2022</p>
+                                            <p><strong>Reg#:</strong> KL-11 AB 5678</p>
+                                            <p><strong>Seats:</strong> 4</p>
+                                            <div class="d-grid gap-2 mt-3">
+                                                <button class="btn btn-sm btn-outline-primary edit-vehicle" data-vehicle-id="1">Edit Details</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="vehicle-details">
+                                            <div class="text-center mb-2">
+                                                <span class="vehicle-icon">🛺</span>
+                                                <h5>Auto Rickshaw</h5>
+                                            </div>
+                                            <p><strong>Make:</strong> Bajaj</p>
+                                            <p><strong>Model:</strong> RE</p>
+                                            <p><strong>Year:</strong> 2021</p>
+                                            <p><strong>Reg#:</strong> KL-11 R 4523</p>
+                                            <p><strong>Seats:</strong> 3</p>
+                                            <div class="d-grid gap-2 mt-3">
+                                                <button class="btn btn-sm btn-outline-primary edit-vehicle" data-vehicle-id="2">Edit Details</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="vehicle-details h-100 d-flex flex-column justify-content-center align-items-center">
+                                            <span class="vehicle-icon">➕</span>
+                                            <h5>Add Vehicle</h5>
+                                            <p class="text-center">Register another vehicle to increase your ride options</p>
+                                            <button class="btn btn-primary mt-3" id="addVehicleBtn">Add New Vehicle</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5 class="mb-0">Documents</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6>Driver's License</h6>
+                                                <p class="text-muted mb-0">Expires: 15 Aug 2027</p>
+                                            </div>
+                                            <span class="badge bg-success">Verified</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6>Vehicle Registration</h6>
+                                                <p class="text-muted mb-0">Sedan - KL-11 AB 5678</p>
+                                            </div>
+                                            <span class="badge bg-success">Verified</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6>Vehicle Insurance</h6>
+                                                <p class="text-muted mb-0">Expires: 30 Nov 2025</p>
+                                            </div>
+                                            <span class="badge bg-success">Verified</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6>Auto Permit</h6>
+                                                <p class="text-muted mb-0">KL-11 R 4523</p>
+                                            </div>
+                                            <span class="badge bg-success">Verified</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <button class="btn btn-outline-primary">Upload New Document</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earnings Tab -->
+            <div class="tab-pane fade" id="earnings" role="tabpanel">
+                <h2>Earnings & Analytics</h2>
+                
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stats-box">
+                            <div class="stat-value">₹12,450</div>
+                            <div class="stat-label">THIS WEEK</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-box">
+                            <div class="stat-value">₹48,750</div>
+                            <div class="stat-label">THIS MONTH</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-box">
+                            <div class="stat-value">₹1,85,200</div>
+                            <div class="stat-label">THIS YEAR</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-box">
+                            <div class="stat-value">₹6,42,800</div>
+                            <div class="stat-label">TOTAL EARNED</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Earnings Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="earnings-chart">
+                            <canvas id="earningsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Recent Transactions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Ride</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Apr 10, 2025</td>
+                                                <td>#NITC-R-4582</td>
+                                                <td>₹500</td>
+                                                <td><span class="badge bg-success">Paid</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Apr 8, 2025</td>
+                                                <td>#NITC-R-4579</td>
+                                                <td>₹700</td>
+                                                <td><span class="badge bg-success">Paid</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Apr 5, 2025</td>
+                                                <td>#NITC-R-4571</td>
+                                                <td>₹350</td>
+                                                <td><span class="badge bg-warning">Pending</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Apr 3, 2025</td>
+                                                <td>#NITC-R-4568</td>
+                                                <td>₹850</td>
+                                                <td><span class="badge bg-success">Paid</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Payment Methods</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
+                                    <div>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/UPI-Logo-vector.svg/1200px-UPI-Logo-vector.svg.png" height="30" class="me-2">
+                                        <span>rajesh.kumar@okaxis</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
+                                    <div>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" height="20" class="me-2">
+                                        <span>•••• •••• •••• 5678</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                </div>
+                                <button class="btn btn-primary w-100 mt-2">Add Payment Method</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ride Details Modal -->
+    <div class="modal fade" id="rideDetailsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rideDetailsModalTitle">Ride Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="rideDetailsModalBody">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accept Ride Confirmation Modal -->
+    <div class="modal fade" id="acceptRideModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Ride Acceptance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to accept this ride request?</p>
+                    <div id="acceptRideDetails">
+                        <!-- Ride details will be inserted here -->
+                    </div>
+                    <div class="mt-3">
+                        <label for="selectVehicle" class="form-label">Select Vehicle:</label>
+                        <select class="form-select" id="selectVehicle">
+                            <option value="1">Maruti Suzuki Dzire (Sedan - KL-11 AB 5678)</option>
+                            <option value="2">Bajaj RE (Auto - KL-11 R 4523)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmAcceptRide">Accept Ride</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Ride Modal -->
+    <div class="modal fade" id="startRideModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Start Ride</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>You are about to start the ride. Please confirm the details:</p>
+                    <div id="startRideDetails">
+                        <!-- Ride details will be inserted here -->
+                    </div>
+                    <div class="mt-3">
+                        <label for="startOdometer" class="form-label">Starting Odometer Reading (km):</label>
+                        <input type="number" class="form-control" id="startOdometer" value="12456">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="confirmStartRide">Start Ride</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Ride Modal -->
+    <div class="modal fade" id="cancelRideModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cancel Ride</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to cancel this ride?</p>
+                    <div id="cancelRideDetails">
+                        <!-- Ride details will be inserted here -->
+                    </div>
+                    <div class="mt-3">
+                        <label for="cancelReason" class="form-label">Reason for cancellation:</label>
+                        <select class="form-select" id="cancelReason">
+                            <option value="vehicle_issue">Vehicle Issue</option>
+                            <option value="personal_emergency">Personal Emergency</option>
+                            <option value="schedule_conflict">Schedule Conflict</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <textarea class="form-control mt-2 d-none" id="otherCancelReason" placeholder="Please specify"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
+                    <button type="button" class="btn btn-danger" id="confirmCancelRide">Cancel Ride</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Vehicle Modal -->
+    <div class="modal fade" id="vehicleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vehicleModalTitle">Add New Vehicle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="vehicleForm">
+                        <div class="text-center mb-4">
+                            <div class="modal-vehicle-icon">🚗</div>
+                            <div class="btn-group" role="group">
+                                <input type="radio" class="btn-check" name="vehicleType" id="vehicleTypeSedan" value="sedan" autocomplete="off" checked>
+                                <label class="btn btn-outline-primary" for="vehicleTypeSedan">Sedan</label>
+                                
+                                <input type="radio" class="btn-check" name="vehicleType" id="vehicleTypeSuv" value="suv" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="vehicleTypeSuv">SUV</label>
+                                
+                                <input type="radio" class="btn-check" name="vehicleType" id="vehicleTypeAuto" value="auto" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="vehicleTypeAuto">Auto</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="vehicleMake" class="form-label">Make</label>
+                            <input type="text" class="form-control" id="vehicleMake" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="vehicleModel" class="form-label">Model</label>
+                            <input type="text" class="form-control" id="vehicleModel" required>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="vehicleYear" class="form-label">Year</label>
+                                <input type="number" class="form-control" id="vehicleYear" min="2000" max="2025" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="vehicleSeats" class="form-label">Seating Capacity</label>
+                                <input type="number" class="form-control" id="vehicleSeats" min="1" max="10" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="vehicleRegNo" class="form-label">Registration Number</label>
+                            <input type="text" class="form-control" id="vehicleRegNo" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="vehicleColor" class="form-label">Color</label>
+                            <input type="text" class="form-control" id="vehicleColor" required>
+                        </div>
+                        
+                        <input type="hidden" id="vehicleId">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveVehicle">Save Vehicle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ride Invoice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="invoiceModalBody">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Print Invoice</button>
+                    <button type="button" class="btn btn-success">Download PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Initialize earnings chart
+            var ctx = document.getElementById('earningsChart').getContext('2d');
+            var earningsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Monthly Earnings (₹)',
+                        data: [15200, 14500, 16800, 18750, 0, 0, 0, 0, 0, 0, 0, 0],
+                        backgroundColor: '#003366',
+                        borderColor: '#002244',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Modal instances
+            var rideDetailsModal = new bootstrap.Modal(document.getElementById('rideDetailsModal'));
+            var acceptRideModal = new bootstrap.Modal(document.getElementById('acceptRideModal'));
+            var startRideModal = new bootstrap.Modal(document.getElementById('startRideModal'));
+            var cancelRideModal = new bootstrap.Modal(document.getElementById('cancelRideModal'));
+            var vehicleModal = new bootstrap.Modal(document.getElementById('vehicleModal'));
+            var invoiceModal = new bootstrap.Modal(document.getElementById('invoiceModal'));
+            
+            // Current ride ID being processed
+            var currentRideId = null;
+            var currentVehicleId = null;
+            
+            // Filter functionality for available rides
+            document.getElementById('applyFilter').addEventListener('click', function() {
+                const dateFilter = document.getElementById('dateFilter').value;
+                const locationFilter = document.getElementById('locationFilter').value;
+                const directionFilter = document.getElementById('directionFilter').value;
+                const passengerFilter = document.getElementById('passengerCountFilter').value;
+                
+                document.querySelectorAll('#availableRidesList .card').forEach(card => {
+                    const rideDate = card.getAttribute('data-date');
+                    const rideLocation = card.getAttribute('data-location');
+                    const rideDirection = card.getAttribute('data-direction');
+                    const ridePassengers = card.getAttribute('data-passengers');
+                    
+                    let show = true;
+                    
+                    if (dateFilter && rideDate !== dateFilter) show = false;
+                    if (locationFilter && rideLocation !== locationFilter) show = false;
+                    if (directionFilter && rideDirection !== directionFilter) show = false;
+                    if (passengerFilter === '1' && ridePassengers !== '1') show = false;
+                    if (passengerFilter === '2' && ridePassengers !== '2') show = false;
+                    if (passengerFilter === '3+' && !['3', '4', '5'].includes(ridePassengers)) show = false;
+                    
+                    card.style.display = show ? 'block' : 'none';
+                });
+            });
+            
+            document.getElementById('resetFilter').addEventListener('click', function() {
+                document.getElementById('dateFilter').value = '';
+                document.getElementById('locationFilter').value = '';
+                document.getElementById('directionFilter').value = '';
+                document.getElementById('passengerCountFilter').value = '';
+                
+                document.querySelectorAll('#availableRidesList .card').forEach(card => {
+                    card.style.display = 'block';
+                });
+            });
+            
+            // Filter functionality for my rides
+            document.getElementById('applyRideFilter').addEventListener('click', function() {
+                const statusFilter = document.getElementById('rideStatusFilter').value;
+                const dateFilter = document.getElementById('rideDate').value;
+                
+                document.querySelectorAll('#myRidesList .card').forEach(card => {
+                    const rideStatus = card.getAttribute('data-status');
+                    const rideDate = card.getAttribute('data-date');
+                    
+                    let show = true;
+                    
+                    if (statusFilter && rideStatus !== statusFilter) show = false;
+                    if (dateFilter && rideDate !== dateFilter) show = false;
+                    
+                    card.style.display = show ? 'block' : 'none';
+                });
+            });
+            
+            document.getElementById('resetRideFilter').addEventListener('click', function() {
+                document.getElementById('rideStatusFilter').value = '';
+                document.getElementById('rideDate').value = '';
+                
+                document.querySelectorAll('#myRidesList .card').forEach(card => {
+                    card.style.display = 'block';
+                });
+            });
+            
+            // View ride details functionality
+            document.querySelectorAll('.view-details, .view-ride-details').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.card');
+                    currentRideId = card.getAttribute('data-ride-id');
+                    
+                    // In a real app, we would fetch these details from an API
+                    const rideDetails = {
+                        id: currentRideId,
+                        from: card.querySelector('h5').textContent.split('→')[0].trim().split(':')[1].trim(),
+                        to: card.querySelector('h5').textContent.split('→')[1].trim(),
+                        dateTime: card.querySelector('p strong').nextSibling.textContent.trim(),
+                        passengers: Array.from(card.querySelectorAll('.badge.bg-light')).map(b => b.textContent),
+                        baggage: card.querySelector('p strong:contains("Baggage")') ? 
+                            card.querySelector('p strong:contains("Baggage")').nextSibling.textContent.trim() : 'None',
+                        vehicle: card.querySelector('.text-center h5').textContent,
+                        fare: card.querySelector('.text-center p:contains("Fare")') ? 
+                            card.querySelector('.text-center p:contains("Fare")').textContent.replace('Est. Fare: ', '') : 
+                            card.querySelector('.text-center p:contains("Fare Collected")').textContent.replace('Fare Collected: ', ''),
+                        distance: card.querySelector('.text-center p:contains("Distance")').textContent.replace('Distance: ', ''),
+                        status: card.querySelector('.badge-section .badge:not(.bg-info)').textContent
+                    };
+                    
+                    document.getElementById('rideDetailsModalTitle').textContent = `Ride #NITC-R-${currentRideId}`;
+                    
+                    let detailsHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Ride Information</h6>
+                                <p><strong>From:</strong> ${rideDetails.from}</p>
+                                <p><strong>To:</strong> ${rideDetails.to}</p>
+                                <p><strong>Date/Time:</strong> ${rideDetails.dateTime}</p>
+                                <p><strong>Status:</strong> <span class="badge ${getStatusBadgeClass(rideDetails.status)}">${rideDetails.status}</span></p>
+                                <p><strong>Vehicle Type:</strong> ${rideDetails.vehicle}</p>
+                                <p><strong>Distance:</strong> ${rideDetails.distance}</p>
+                                <p><strong>Fare:</strong> ${rideDetails.fare}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Passenger Details</h6>
+                                ${rideDetails.passengers.map(p => `<p>${p}</p>`).join('')}
+                                <p><strong>Baggage:</strong> ${rideDetails.baggage}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    if (rideDetails.status === 'Completed') {
+                        detailsHTML += `
+                            <hr>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h6>Ride Completion</h6>
+                                    <p><strong>Actual Duration:</strong> 42 minutes</p>
+                                    <p><strong>Actual Distance:</strong> 28.5 km</p>
+                                    <p><strong>Final Fare:</strong> ₹700</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Feedback</h6>
+                                    <p><strong>Rating:</strong> ★★★★★ (5.0)</p>
+                                    <p><strong>Comment:</strong> "Excellent service, very punctual and safe driver."</p>
+                                </div>
+                            </div>
+                        `;
+                    } else if (rideDetails.status === 'Canceled') {
+                        detailsHTML += `
+                            <hr>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <h6>Cancellation Details</h6>
+                                    <p><strong>Reason:</strong> Flight delay by 5 hours</p>
+                                    <p><strong>Canceled by:</strong> Passenger</p>
+                                    <p><strong>Canceled at:</strong> April 5, 2025, 9:15 AM</p>
+                                    <p><strong>Cancellation Fee:</strong> ₹0</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    document.getElementById('rideDetailsModalBody').innerHTML = detailsHTML;
+                    rideDetailsModal.show();
+                });
+            });
+            
+            // Accept ride functionality
+            document.querySelectorAll('.accept-ride').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.card');
+                    currentRideId = card.getAttribute('data-ride-id');
+                    
+                    const rideDetails = {
+                        from: card.querySelector('h5').textContent.split('→')[0].trim().split(':')[1].trim(),
+                        to: card.querySelector('h5').textContent.split('→')[1].trim(),
+                        dateTime: card.querySelector('p strong').nextSibling.textContent.trim(),
+                        passengers: card.querySelector('.badge-section .badge.bg-info').textContent.trim(),
+                        fare: card.querySelector('.text-center p:contains("Fare")').textContent.replace('Est. Fare: ', '')
+                    };
+                    
+                    document.getElementById('acceptRideDetails').innerHTML = `
+                        <div class="alert alert-info">
+                            <p><strong>Route:</strong> ${rideDetails.from} → ${rideDetails.to}</p>
+                            <p><strong>Date/Time:</strong> ${rideDetails.dateTime}</p>
+                            <p><strong>Passengers:</strong> ${rideDetails.passengers}</p>
+                            <p><strong>Estimated Fare:</strong> ${rideDetails.fare}</p>
+                        </div>
+                    `;
+                    
+                    acceptRideModal.show();
+                });
+            });
+            
+            document.getElementById('confirmAcceptRide').addEventListener('click', function() {
+                // In a real app, this would call an API to accept the ride
+                alert(`Ride #${currentRideId} accepted successfully!`);
+                acceptRideModal.hide();
+                
+                // Update the UI to move the ride to "My Rides"
+                const rideCard = document.querySelector(`.card[data-ride-id="${currentRideId}"]`);
+                if (rideCard) {
+                    rideCard.remove();
+                    
+                    // In a real app, we would add it to the "My Rides" list with updated status
+                    // For demo, we'll just show an alert
+                    alert('The ride has been moved to your "My Rides" tab with "Accepted" status.');
+                }
+            });
+            
+            // Start ride functionality
+            document.querySelectorAll('.start-ride').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.card');
+                    currentRideId = card.getAttribute('data-ride-id');
+                    
+                    const rideDetails = {
+                        from: card.querySelector('h5').textContent.split('→')[0].trim().split(':')[1].trim(),
+                        to: card.querySelector('h5').textContent.split('→')[1].trim(),
+                        dateTime: card.querySelector('p strong').nextSibling.textContent.trim(),
+                        passengers: Array.from(card.querySelectorAll('.badge.bg-light')).map(b => b.textContent).join(', '),
+                        fare: card.querySelector('.text-center p:contains("Fare")').textContent.replace('Est. Fare: ', '')
+                    };
+                    
+                    document.getElementById('startRideDetails').innerHTML = `
+                        <div class="alert alert-info">
+                            <p><strong>Route:</strong> ${rideDetails.from} → ${rideDetails.to}</p>
+                            <p><strong>Date/Time:</strong> ${rideDetails.dateTime}</p>
+                            <p><strong>Passengers:</strong> ${rideDetails.passengers}</p>
+                            <p><strong>Estimated Fare:</strong> ${rideDetails.fare}</p>
+                        </div>
+                    `;
+                    
+                    startRideModal.show();
+                });
+            });
+            
+            document.getElementById('confirmStartRide').addEventListener('click', function() {
+                // In a real app, this would call an API to start the ride
+                alert(`Ride #${currentRideId} started successfully!`);
+                startRideModal.hide();
+                
+                // Update the UI to show ride in progress
+                const rideCard = document.querySelector(`.card[data-ride-id="${currentRideId}"]`);
+                if (rideCard) {
+                    const startButton = rideCard.querySelector('.start-ride');
+                    if (startButton) {
+                        startButton.textContent = 'Ride in Progress';
+                        startButton.classList.remove('btn-success');
+                        startButton.classList.add('btn-warning');
+                    }
+                }
+            });
+            
+            // Cancel ride functionality
+            document.querySelectorAll('.cancel-ride').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.card');
+                    currentRideId = card.getAttribute('data-ride-id');
+                    
+                    const rideDetails = {
+                        from: card.querySelector('h5').textContent.split('→')[0].trim().split(':')[1].trim(),
+                        to: card.querySelector('h5').textContent.split('→')[1].trim(),
+                        dateTime: card.querySelector('p strong').nextSibling.textContent.trim(),
+                        passengers: Array.from(card.querySelectorAll('.badge.bg-light')).map(b => b.textContent).join(', '),
+                        fare: card.querySelector('.text-center p:contains("Fare")').textContent.replace('Est. Fare: ', '')
+                    };
+                    
+                    document.getElementById('cancelRideDetails').innerHTML = `
+                        <div class="alert alert-warning">
+                            <p><strong>Route:</strong> ${rideDetails.from} → ${rideDetails.to}</p>
+                            <p><strong>Date/Time:</strong> ${rideDetails.dateTime}</p>
+                            <p><strong>Passengers:</strong> ${rideDetails.passengers}</p>
+                            <p><strong>Estimated Fare:</strong> ${rideDetails.fare}</p>
+                        </div>
+                        <div class="alert alert-danger">
+                            <strong>Note:</strong> Canceling rides affects your reliability rating. Please avoid canceling unless absolutely necessary.
+                        </div>
+                    `;
+                    
+                    cancelRideModal.show();
+                });
+            });
+            
+            document.getElementById('cancelReason').addEventListener('change', function() {
+                const otherReasonField = document.getElementById('otherCancelReason');
+                if (this.value === 'other') {
+                    otherReasonField.classList.remove('d-none');
+                    otherReasonField.required = true;
+                } else {
+                    otherReasonField.classList.add('d-none');
+                    otherReasonField.required = false;
+                }
+            });
+            
+            document.getElementById('confirmCancelRide').addEventListener('click', function() {
+                const reason = document.getElementById('cancelReason').value;
+                const otherReason = reason === 'other' ? document.getElementById('otherCancelReason').value : '';
+                
+                // In a real app, this would call an API to cancel the ride
+                alert(`Ride #${currentRideId} canceled. Reason: ${reason}${otherReason ? ' - ' + otherReason : ''}`);
+                cancelRideModal.hide();
+                
+                // Update the UI to show ride as canceled
+                const rideCard = document.querySelector(`.card[data-ride-id="${currentRideId}"]`);
+                if (rideCard) {
+                    const statusBadge = rideCard.querySelector('.badge-section .badge:not(.bg-info)');
+                    if (statusBadge) {
+                        statusBadge.textContent = 'Canceled';
+                        statusBadge.className = 'badge status-canceled';
+                    }
+                    
+                    // Disable action buttons
+                    rideCard.querySelectorAll('.start-ride, .cancel-ride').forEach(btn => {
+                        btn.disabled = true;
+                    });
+                }
+            });
+            
+            // Contact passengers functionality
+            document.querySelectorAll('.contact-passengers').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.card');
+                    const contacts = card.querySelector('p strong:contains("Contact")').nextSibling.textContent.trim();
+                    alert(`Calling passengers at: ${contacts}`);
+                });
+            });
+            
+            // Profile edit functionality
+            document.getElementById('editProfileBtn').addEventListener('click', function() {
+                // Enable form fields
+                document.querySelectorAll('#profileForm input, #profileForm textarea').forEach(field => {
+                    field.readOnly = false;
+                });
+                
+                // Show save/cancel buttons
+                document.getElementById('profileFormButtons').classList.remove('d-none');
+            });
+            
+            document.getElementById('cancelEditProfile').addEventListener('click', function() {
+                // Reset form to original values
+                document.getElementById('profileForm').reset();
+                
+                // Disable form fields
+                document.querySelectorAll('#profileForm input, #profileForm textarea').forEach(field => {
+                    field.readOnly = true;
+                });
+                
+                // Hide save/cancel buttons
+                document.getElementById('profileFormButtons').classList.add('d-none');
+            });
+            
+            document.getElementById('saveProfile').addEventListener('click', function() {
+                // In a real app, this would validate and save to API
+                alert('Profile updated successfully!');
+                
+                // Disable form fields
+                document.querySelectorAll('#profileForm input, #profileForm textarea').forEach(field => {
+                    field.readOnly = true;
+                });
+                
+                // Hide save/cancel buttons
+                document.getElementById('profileFormButtons').classList.add('d-none');
+            });
+            
+            // Vehicle management functionality
+            document.getElementById('addVehicleBtn').addEventListener('click', function() {
+                document.getElementById('vehicleModalTitle').textContent = 'Add New Vehicle';
+                document.getElementById('vehicleId').value = '';
+                document.getElementById('vehicleForm').reset();
+                vehicleModal.show();
+            });
+            
+            document.querySelectorAll('.edit-vehicle').forEach(button => {
+                button.addEventListener('click', function() {
+                    currentVehicleId = this.getAttribute('data-vehicle-id');
+                    document.getElementById('vehicleModalTitle').textContent = 'Edit Vehicle';
+                    
+                    // In a real app, we would fetch vehicle details from API
+                    // For demo, we'll use mock data based on the vehicle ID
+                    const vehicleDetails = currentVehicleId === '1' ? {
+                        type: 'sedan',
+                        make: 'Maruti Suzuki',
+                        model: 'Dzire',
+                        year: '2022',
+                        seats: '4',
+                        regNo: 'KL-11 AB 5678',
+                        color: 'Silver'
+                    } : {
+                        type: 'auto',
+                        make: 'Bajaj',
+                        model: 'RE',
+                        year: '2021',
+                        seats: '3',
+                        regNo: 'KL-11 R 4523',
+                        color: 'Yellow'
+                    };
+                    
+                    document.getElementById('vehicleType' + vehicleDetails.type.charAt(0).toUpperCase() + vehicleDetails.type.slice(1)).checked = true;
+                    document.getElementById('vehicleMake').value = vehicleDetails.make;
+                    document.getElementById('vehicleModel').value = vehicleDetails.model;
+                    document.getElementById('vehicleYear').value = vehicleDetails.year;
+                    document.getElementById('vehicleSeats').value = vehicleDetails.seats;
+                    document.getElementById('vehicleRegNo').value = vehicleDetails.regNo;
+                    document.getElementById('vehicleColor').value = vehicleDetails.color;
+                    document.getElementById('vehicleId').value = currentVehicleId;
+                    
+                    vehicleModal.show();
+                });
+            });
+            
+            document.getElementById('saveVehicle').addEventListener('click', function() {
+                // In a real app, this would validate and save to API
+                const isNew = document.getElementById('vehicleId').value === '';
+                alert(`Vehicle ${isNew ? 'added' : 'updated'} successfully!`);
+                vehicleModal.hide();
+                
+                // In a real app, we would refresh the vehicle list
+            });
+            
+            // View invoice functionality
+            document.querySelectorAll('.view-invoice').forEach(button => {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.card');
+                    currentRideId = card.getAttribute('data-ride-id');
+                    
+                    // In a real app, we would fetch invoice details from API
+                    const invoiceDetails = {
+                        id: `NITC-INV-${currentRideId}`,
+                        date: 'April 8, 2025',
+                        driver: 'Rajesh Kumar (NITC-DR-4582)',
+                        passengers: Array.from(card.querySelectorAll('.badge.bg-light')).map(b => b.textContent),
+                        route: `${card.querySelector('h5').textContent.split('→')[0].trim().split(':')[1].trim()} → ${card.querySelector('h5').textContent.split('→')[1].trim()}`,
+                        dateTime: card.querySelector('p strong').nextSibling.textContent.trim(),
+                        distance: '28.5 km',
+                        duration: '42 minutes',
+                        baseFare: '₹600',
+                        distanceCharge: '₹100',
+                        total: '₹700',
+                        paymentMethod: 'UPI (rajesh.kumar@upi)',
+                        status: 'Paid'
+                    };
+                    
+                    document.getElementById('invoiceModalBody').innerHTML = `
+                        <div class="container">
+                            <div class="text-center mb-4">
+                                <h3>NITC Carpool Connect</h3>
+                                <p class="text-muted">Invoice #${invoiceDetails.id}</p>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h5>Driver Information</h5>
+                                    <p>${invoiceDetails.driver}</p>
+                                    <p>Rating: ★★★★★ (5.0)</p>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <h5>Invoice Details</h5>
+                                    <p><strong>Date:</strong> ${invoiceDetails.date}</p>
+                                    <p><strong>Status:</strong> <span class="badge bg-success">${invoiceDetails.status}</span></p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5>Ride Details</h5>
+                                <p><strong>Passengers:</strong> ${invoiceDetails.passengers.join(', ')}</p>
+                                <p><strong>Route:</strong> ${invoiceDetails.route}</p>
+                                <p><strong>Date/Time:</strong> ${invoiceDetails.dateTime}</p>
+                                <p><strong>Distance:</strong> ${invoiceDetails.distance}</p>
+                                <p><strong>Duration:</strong> ${invoiceDetails.duration}</p>
+                            </div>
+                            
+                            <div class="table-responsive mb-4">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Description</th>
+                                            <th class="text-end">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Base Fare</td>
+                                            <td class="text-end">${invoiceDetails.baseFare}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Distance Charge</td>
+                                            <td class="text-end">${invoiceDetails.distanceCharge}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total</strong></td>
+                                            <td class="text-end"><strong>${invoiceDetails.total}</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="text-center text-muted">
+                                <p>Payment Method: ${invoiceDetails.paymentMethod}</p>
+                                <p>Thank you for using NITC Carpool Connect!</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    invoiceModal.show();
+                });
+            });
+            
+            // Helper function to get status badge class
+            function getStatusBadgeClass(status) {
+                switch(status.toLowerCase()) {
+                    case 'pending': return 'status-pending';
+                    case 'accepted': return 'status-accepted';
+                    case 'completed': return 'status-completed';
+                    case 'canceled': return 'status-canceled';
+                    default: return 'bg-secondary';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

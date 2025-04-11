@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NITC Carpool Connect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .header {
+            background-color: #003366;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        .logo {
+            height: 60px;
+            margin-right: 15px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #003366;
+            border-color: #003366;
+        }
+        .btn-primary:hover {
+            background-color: #002244;
+            border-color: #002244;
+        }
+        .match-card {
+            border-left: 5px solid #003366;
+        }
+        .vehicle-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .tab-content {
+            padding: 20px;
+            background-color: white;
+            border-radius: 0 0 10px 10px;
+            border: 1px solid #dee2e6;
+            border-top: none;
+        }
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+            color: #003366;
+        }
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+        .matches-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        body {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.0), rgba(255, 255, 255, 0.0)), 
+                          url('https://nitc.ac.in/xc-assets/images/thumb/life-at-nitc-video.webp');
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        position: relative;
+    </style>
+</head>
+<body>
+    <div class="header text-center">
+        <div class="container">
+            <img src="https://images.seeklogo.com/logo-png/45/1/national-institute-of-technology-calicut-logo-png_seeklogo-458279.png" alt="NITC Logo" class="logo">
+            <h1>NITC Carpool Connect</h1>
+            <p class="lead">Share rides. Save money. Connect with fellow NITC students.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="to-nitc-tab" data-bs-toggle="tab" data-bs-target="#to-nitc" type="button" role="tab">To NITC</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="from-nitc-tab" data-bs-toggle="tab" data-bs-target="#from-nitc" type="button" role="tab">From NITC</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <!-- To NITC Tab -->
+            <div class="tab-pane fade show active" id="to-nitc" role="tabpanel">
+                <h2>Request Ride to NITC</h2>
+                <form id="toNitcForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="toName" class="form-label required-field">Full Name</label>
+                            <input type="text" class="form-control" id="toName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="toGender" class="form-label required-field">Gender</label>
+                            <select class="form-select" id="toGender" required>
+                                <option value="">Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="toEmail" class="form-label required-field">Email</label>
+                            <input type="email" class="form-control" id="toEmail" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="toPhone" class="form-label required-field">Phone Number</label>
+                            <input type="tel" class="form-control" id="toPhone" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="toYear" class="form-label ">Year of Study (Optional)</label>
+                            <select class="form-select" id="toYear" required>
+                                <option value="">Select</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                                <option value="5th Year">5th Year</option>
+                                <option value="PG">PG</option>
+                                <option value="PhD">PhD</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="toDepartment" class="form-label ">Department (Optional)</label>
+                            <input type="text" class="form-control" id="toDepartment" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="toHostel" class="form-label">Hostel (Optional)</label>
+                            <input type="text" class="form-control" id="toHostel">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="toPickup" class="form-label required-field">Pickup Location</label>
+                            <select class="form-select" id="toPickup" required>
+                                <option value="">Select</option>
+                                <option value="Calicut International Airport (CCJ)">Calicut International Airport (CCJ)</option>
+                                <option value="Kozhikode Railway Station (CLT)">Kozhikode Railway Station (CLT)</option>
+                                <option value="Kannur International Airport (CNN)">Kannur International Airport (CNN)</option>
+                                <option value="Other">Other (Specify below)</option>
+                            </select>
+                            <div id="toOtherPickupContainer" class="mt-2" style="display: none;">
+                                <input type="text" class="form-control" id="toOtherPickup" placeholder="Specify pickup location">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="toDestination" class="form-label required-field">Destination at NITC</label>
+                            <select class="form-select" id="toDestination" required>
+                                <option value="">Select</option>
+                                <option value="Main Gate">Main Gate</option>
+                                <option value="Hostel Area">Hostel Area</option>
+                                <option value="Academic Area">Academic Area</option>
+                                <option value="Other">Other (Specify below)</option>
+                            </select>
+                            <div id="toOtherDestinationContainer" class="mt-2" style="display: none;">
+                                <input type="text" class="form-control" id="toOtherDestination" placeholder="Specify destination">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="toDate" class="form-label required-field">Date of Travel</label>
+                            <input type="date" class="form-control" id="toDate" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="toTime" class="form-label required-field">Time of Travel</label>
+                            <input type="time" class="form-control" id="toTime" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="toBaggage" class="form-label required-field">Baggage Size</label>
+                            <select class="form-select" id="toBaggage" required>
+                                <option value="">Select</option>
+                                <option value="Small (1 backpack)">Small (1 backpack)</option>
+                                <option value="Medium (1 suitcase)">Medium (1 suitcase)</option>
+                                <option value="Large (2+ suitcases)">Large (2+ suitcases)</option>
+                                <option value="Extra (bulky items)">Extra (bulky items)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="toFlexibility" class="form-label">Time Flexibility</label>
+                            <select class="form-select" id="toFlexibility">
+                                <option value="None">None (must be exact time)</option>
+                                <option value="±30 minutes" selected>±30 minutes</option>
+                                <option value="±1 hour">±1 hour</option>
+                                <option value="±2 hours">±2 hours</option>
+                                <option value="Flexible">Flexible (any time that day)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="toAgreeShare" checked>
+                        <label class="form-check-label" for="toAgreeShare">I agree to share the ride with other NITC students</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="toTerms" required>
+                        <label class="form-check-label" for="toTerms">I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and conditions</a></label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </form>
+
+                <div id="toMatchesResults" class="matches-section" style="display: none;">
+                    <h3>Potential Ride Matches</h3>
+                    <div class="alert alert-info">
+                        Based on your travel details, here are students you can share a ride with:
+                    </div>
+                    <div id="toMatchesList"></div>
+                </div>
+            </div>
+
+            <!-- From NITC Tab -->
+            <div class="tab-pane fade" id="from-nitc" role="tabpanel">
+                <h2>Request Ride from NITC</h2>
+                <form id="fromNitcForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="fromName" class="form-label required-field">Full Name</label>
+                            <input type="text" class="form-control" id="fromName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fromGender" class="form-label required-field">Gender</label>
+                            <select class="form-select" id="fromGender" required>
+                                <option value="">Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="fromEmail" class="form-label required-field">Email</label>
+                            <input type="email" class="form-control" id="fromEmail" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fromPhone" class="form-label required-field">Phone Number</label>
+                            <input type="tel" class="form-control" id="fromPhone" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="fromYear" class="form-label required-field">Year of Study</label>
+                            <select class="form-select" id="fromYear" required>
+                                <option value="">Select</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                                <option value="5th Year">5th Year</option>
+                                <option value="PG">PG</option>
+                                <option value="PhD">PhD</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fromDepartment" class="form-label required-field">Department</label>
+                            <input type="text" class="form-control" id="fromDepartment" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fromHostel" class="form-label">Hostel (Optional)</label>
+                            <input type="text" class="form-control" id="fromHostel">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="fromPickup" class="form-label required-field">Pickup at NITC</label>
+                            <select class="form-select" id="fromPickup" required>
+                                <option value="">Select</option>
+                                <option value="Main Gate">Main Gate</option>
+                                <option value="Hostel Area">Hostel Area</option>
+                                <option value="Academic Area">Academic Area</option>
+                                <option value="Other">Other (Specify below)</option>
+                            </select>
+                            <div id="fromOtherPickupContainer" class="mt-2" style="display: none;">
+                                <input type="text" class="form-control" id="fromOtherPickup" placeholder="Specify pickup location">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fromDestination" class="form-label required-field">Destination</label>
+                            <select class="form-select" id="fromDestination" required>
+                                <option value="">Select</option>
+                                <option value="Calicut International Airport (CCJ)">Calicut International Airport (CCJ)</option>
+                                <option value="Kozhikode Railway Station (CLT)">Kozhikode Railway Station (CLT)</option>
+                                <option value="Kannur International Airport (CNN)">Kannur International Airport (CNN)</option>
+                                <option value="Other">Other (Specify below)</option>
+                            </select>
+                            <div id="fromOtherDestinationContainer" class="mt-2" style="display: none;">
+                                <input type="text" class="form-control" id="fromOtherDestination" placeholder="Specify destination">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="fromDate" class="form-label required-field">Date of Travel</label>
+                            <input type="date" class="form-control" id="fromDate" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fromTime" class="form-label required-field">Time of Travel</label>
+                            <input type="time" class="form-control" id="fromTime" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="fromBaggage" class="form-label required-field">Baggage Size</label>
+                            <select class="form-select" id="fromBaggage" required>
+                                <option value="">Select</option>
+                                <option value="Small (1 backpack)">Small (1 backpack)</option>
+                                <option value="Medium (1 suitcase)">Medium (1 suitcase)</option>
+                                <option value="Large (2+ suitcases)">Large (2+ suitcases)</option>
+                                <option value="Extra (bulky items)">Extra (bulky items)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="fromFlexibility" class="form-label">Time Flexibility</label>
+                            <select class="form-select" id="fromFlexibility">
+                                <option value="None">None (must be exact time)</option>
+                                <option value="±30 minutes" selected>±30 minutes</option>
+                                <option value="±1 hour">±1 hour</option>
+                                <option value="±2 hours">±2 hours</option>
+                                <option value="Flexible">Flexible (any time that day)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="fromAgreeShare" checked>
+                        <label class="form-check-label" for="fromAgreeShare">I agree to share the ride with other NITC students</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="fromTerms" required>
+                        <label class="form-check-label" for="fromTerms">I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and conditions</a></label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </form>
+
+                <div id="fromMatchesResults" class="matches-section" style="display: none;">
+                    <h3>Potential Ride Matches</h3>
+                    <div class="alert alert-info">
+                        Based on your travel details, here are students you can share a ride with:
+                    </div>
+                    <div id="fromMatchesList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="successModalLabel">Success!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Your ride request has been submitted successfully. We've found some potential matches for you below.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terms Modal -->
+        <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>NITC Carpool Connect Terms of Service</h6>
+                        <ol>
+                            <li>This service is exclusively for NIT Calicut students with valid institute email IDs.</li>
+                            <li>You agree to share your basic information with potential ride matches.</li>
+                            <li>The platform only facilitates connections - ride arrangements are between students.</li>
+                            <li>You are responsible for verifying the identity of your ride partners.</li>
+                            <li>Costs will be split equally unless otherwise agreed upon.</li>
+                            <li>You must behave respectfully with all ride partners.</li>
+                            <li>False information may result in account suspension.</li>
+                        </ol>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>&copy; 2023 NITC Carpool Connect. For NIT Calicut students only.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tab functionality
+            const tabElms = document.querySelectorAll('button[data-bs-toggle="tab"]');
+            tabElms.forEach(tabEl => {
+                tabEl.addEventListener('click', event => {
+                    event.preventDefault();
+                    const tab = new bootstrap.Tab(tabEl);
+                    tab.show();
+                });
+            });
+
+            // Show/hide other location fields
+            document.getElementById('toPickup').addEventListener('change', function() {
+                document.getElementById('toOtherPickupContainer').style.display = 
+                    this.value === 'Other' ? 'block' : 'none';
+            });
+            
+            document.getElementById('toDestination').addEventListener('change', function() {
+                document.getElementById('toOtherDestinationContainer').style.display = 
+                    this.value === 'Other' ? 'block' : 'none';
+            });
+            
+            document.getElementById('fromPickup').addEventListener('change', function() {
+                document.getElementById('fromOtherPickupContainer').style.display = 
+                    this.value === 'Other' ? 'block' : 'none';
+            });
+            
+            document.getElementById('fromDestination').addEventListener('change', function() {
+                document.getElementById('fromOtherDestinationContainer').style.display = 
+                    this.value === 'Other' ? 'block' : 'none';
+            });
+
+            // Form submissions
+            document.getElementById('toNitcForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitRideRequest('to-nitc');
+            });
+            
+            document.getElementById('fromNitcForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitRideRequest('from-nitc');
+            });
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('toDate').min = today;
+            document.getElementById('fromDate').min = today;
+        });
+
+        function submitRideRequest(direction) {
+            const formId = direction === 'to-nitc' ? 'toNitcForm' : 'fromNitcForm';
+            const form = document.getElementById(formId);
+            
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+
+            const data = {
+                type: direction === 'to-nitc' ? 'To NITC' : 'From NITC',
+                name: document.getElementById(direction === 'to-nitc' ? 'toName' : 'fromName').value,
+                gender: document.getElementById(direction === 'to-nitc' ? 'toGender' : 'fromGender').value,
+                email: document.getElementById(direction === 'to-nitc' ? 'toEmail' : 'fromEmail').value,
+                phone: document.getElementById(direction === 'to-nitc' ? 'toPhone' : 'fromPhone').value,
+                year: document.getElementById(direction === 'to-nitc' ? 'toYear' : 'fromYear').value,
+                department: document.getElementById(direction === 'to-nitc' ? 'toDepartment' : 'fromDepartment').value,
+                hostel: document.getElementById(direction === 'to-nitc' ? 'toHostel' : 'fromHostel').value,
+                pickup: document.getElementById(direction === 'to-nitc' ? 'toPickup' : 'fromPickup').value,
+                pickup_other: direction === 'to-nitc' ? 
+                    (document.getElementById('toPickup').value === 'Other' ? document.getElementById('toOtherPickup').value : '') :
+                    (document.getElementById('fromPickup').value === 'Other' ? document.getElementById('fromOtherPickup').value : ''),
+                destination: document.getElementById(direction === 'to-nitc' ? 'toDestination' : 'fromDestination').value,
+                destination_other: direction === 'to-nitc' ? 
+                    (document.getElementById('toDestination').value === 'Other' ? document.getElementById('toOtherDestination').value : '') :
+                    (document.getElementById('fromDestination').value === 'Other' ? document.getElementById('fromOtherDestination').value : ''),
+                date: document.getElementById(direction === 'to-nitc' ? 'toDate' : 'fromDate').value,
+                time: document.getElementById(direction === 'to-nitc' ? 'toTime' : 'fromTime').value,
+                baggage: document.getElementById(direction === 'to-nitc' ? 'toBaggage' : 'fromBaggage').value,
+                flexibility: document.getElementById(direction === 'to-nitc' ? 'toFlexibility' : 'fromFlexibility').value,
+                agree_share: document.getElementById(direction === 'to-nitc' ? 'toAgreeShare' : 'fromAgreeShare').checked ? 'Yes' : 'No',
+                timestamp: new Date().toISOString()
+            };
+
+            // Send data to Google Sheets API
+            fetch('https://sheetdb.io/api/v1/oe300tfgwpwxw', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({data: data})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                // Show success modal
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+                
+                // Find and display matches
+                findMatchingRides(direction);
+                
+                // Reset form
+                form.reset();
+                form.classList.remove('was-validated');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('There was an error submitting your request. Please try again.');
+            });
+        }
+
+        function findMatchingRides(direction) {
+            const date = document.getElementById(direction === 'to-nitc' ? 'toDate' : 'fromDate').value;
+            const time = document.getElementById(direction === 'to-nitc' ? 'toTime' : 'fromTime').value;
+            const location = document.getElementById(direction === 'to-nitc' ? 'toPickup' : 'fromDestination').value;
+            
+            // Show loading state
+            const resultsDiv = document.getElementById(direction === 'to-nitc' ? 'toMatchesList' : 'fromMatchesList');
+            const sectionDiv = document.getElementById(direction === 'to-nitc' ? 'toMatchesResults' : 'fromMatchesResults');
+            resultsDiv.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p>Searching for matches...</p></div>';
+            sectionDiv.style.display = 'block';
+
+            // Fetch all rides from the API
+            fetch('https://sheetdb.io/api/v1/oe300tfgwpwxw')
+                .then(response => response.json())
+                .then(data => {
+                    // Filter rides based on criteria
+                    const matches = data.filter(ride => {
+                        // Basic direction and date match (opposite direction)
+                        if (ride.type === (direction === 'to-nitc' ? 'To NITC' : 'From NITC') || ride.date !== date) {
+                            return false;
+                        }
+                        
+                        // Location filter
+                        const rideLocation = ride.pickup === 'Other' ? ride.pickup_other : ride.pickup;
+                        const rideDestination = ride.destination === 'Other' ? ride.destination_other : ride.destination;
+                        
+                        if (direction === 'to-nitc') {
+                            if (!rideDestination.includes(location.split(' ')[0])) {
+                                return false;
+                            }
+                        } else {
+                            if (!rideLocation.includes(location.split(' ')[0])) {
+                                return false;
+                            }
+                        }
+                        
+                        // Time filter
+                        if (time) {
+                            // Simple time comparison (could be enhanced with flexibility)
+                            const rideTime = ride.time.split(':');
+                            const searchTime = time.split(':');
+                            
+                            const rideMinutes = parseInt(rideTime[0]) * 60 + parseInt(rideTime[1]);
+                            const searchMinutes = parseInt(searchTime[0]) * 60 + parseInt(searchTime[1]);
+                            
+                            // Check if within ±2 hours by default
+                            if (Math.abs(rideMinutes - searchMinutes) > 120) {
+                                return false;
+                            }
+                        }
+                        
+                        return true;
+                    });
+                    
+                    // Display results
+                    displayMatches(matches, direction, resultsDiv);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultsDiv.innerHTML = '<div class="alert alert-danger">There was an error fetching matches. Please try again.</div>';
+                });
+        }
+
+        function displayMatches(matches, direction, resultsDiv) {
+            if (matches.length === 0) {
+                resultsDiv.innerHTML = '<div class="alert alert-info">No matching rides found yet. Check back later or consider creating your own request.</div>';
+                return;
+            }
+            
+            let html = `<p>Found ${matches.length} potential match${matches.length > 1 ? 'es' : ''}</p>`;
+            
+            matches.forEach(match => {
+                // Determine vehicle type based on baggage
+                let vehicleType = 'Auto Rickshaw';
+                let vehicleIcon = '🚗';
+                let seats = 3;
+                let costEstimate = '₹200-300';
+                
+                if (match.baggage.includes('Medium') || match.baggage.includes('Large')) {
+                    vehicleType = 'Sedan Car';
+                    vehicleIcon = '🚘';
+                    seats = 4;
+                    costEstimate = '₹500-800';
+                }
+                
+                if (match.baggage.includes('Extra') || matches.filter(m => 
+                    m.date === match.date && 
+                    m.time === match.time && 
+                    (direction === 'to-nitc' ? 
+                        (m.destination === match.destination || m.destination_other === match.destination_other) :
+                        (m.pickup === match.pickup || m.pickup_other === match.pickup_other))).length > 1) {
+                    vehicleType = 'SUV/MUV';
+                    vehicleIcon = '🚙';
+                    seats = 6;
+                    costEstimate = '₹800-1200';
+                }
+                
+                html += `
+                <div class="card match-card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5>${match.name} (${match.gender}, ${match.year})</h5>
+                                <p><strong>${direction === 'to-nitc' ? 'From' : 'To'}:</strong> ${match.pickup === 'Other' ? match.pickup_other : match.pickup}</p>
+                                <p><strong>${direction === 'to-nitc' ? 'To' : 'From'}:</strong> ${match.destination === 'Other' ? match.destination_other : match.destination}</p>
+                                <p><strong>Date/Time:</strong> ${match.date} at ${match.time}</p>
+                                <p><strong>Baggage:</strong> ${match.baggage}</p>
+                                <p><strong>Department:</strong> ${match.department} ${match.hostel ? ' | Hostel: ' + match.hostel : ''}</p>
+                                <p><strong>Contact:</strong> ${match.phone} | ${match.email}</p>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="vehicle-icon">${vehicleIcon}</div>
+                                <h5>${vehicleType}</h5>
+                                <p>Seats: ${seats}</p>
+                                <p>Est. Cost: ${costEstimate}</p>
+                                <button class="btn btn-sm btn-outline-primary mt-2">Contact to Join</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+            
+            // Add optimal grouping suggestion if multiple matches
+            if (matches.length > 1) {
+                const optimalGroup = calculateOptimalGrouping(matches, direction);
+                if (optimalGroup) {
+                    html += `
+                    <div class="card border-success mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Optimal Grouping Suggestion</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <p>You can save money by grouping with ${optimalGroup.count-1} other student${optimalGroup.count > 2 ? 's' : ''} in a ${optimalGroup.vehicle}.</p>
+                                    <p><strong>Estimated Cost per Person:</strong> ₹${optimalGroup.costPerPerson}</p>
+                                    <p><strong>Total Savings:</strong> ₹${optimalGroup.savings} compared to individual rides</p>
+                                    <ul>
+                                        ${optimalGroup.members.map(m => `<li>${m.name} (${m.phone})</li>`).join('')}
+                                    </ul>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="vehicle-icon">${optimalGroup.icon}</div>
+                                    <button class="btn btn-success mt-3">Create Group Ride</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function calculateOptimalGrouping(matches, direction) {
+            // Simple grouping algorithm - can be enhanced
+            if (matches.length < 2) return null;
+            
+            // Group by similar time (within 1 hour) and same location
+            const timeGroups = {};
+            matches.forEach(match => {
+                const timeKey = match.time.substring(0, 2) + '00'; // Group by hour
+                if (!timeGroups[timeKey]) {
+                    timeGroups[timeKey] = [];
+                }
+                timeGroups[timeKey].push(match);
+            });
+            
+            // Find the largest group
+            let largestGroup = [];
+            for (const key in timeGroups) {
+                if (timeGroups[key].length > largestGroup.length) {
+                    largestGroup = timeGroups[key];
+                }
+            }
+            
+            if (largestGroup.length < 2) return null;
+            
+            // Determine vehicle type based on group size and baggage
+            let vehicleType, icon, seats, totalCost;
+            const totalBaggage = largestGroup.reduce((acc, m) => {
+                if (m.baggage.includes('Extra') || m.baggage.includes('Large')) return acc + 2;
+                if (m.baggage.includes('Medium')) return acc + 1;
+                return acc + 0.5;
+            }, 0);
+            
+            if (totalBaggage <= 3 && largestGroup.length <= 3) {
+                vehicleType = 'Auto Rickshaw';
+                icon = '🛺';
+                seats = 3;
+                totalCost = 300;
+            } else if (totalBaggage <= 6 && largestGroup.length <= 4) {
+                vehicleType = 'Sedan Car';
+                icon = '🚗';
+                seats = 4;
+                totalCost = 800;
+            } else {
+                vehicleType = 'SUV/MUV';
+                icon = '🚙';
+                seats = 6;
+                totalCost = 1200;
+            }
+            
+            // Calculate savings
+            const individualCosts = {
+                'Auto Rickshaw': 300,
+                'Sedan Car': 800,
+                'SUV/MUV': 1200
+            };
+            
+            let totalIndividualCost = 0;
+            largestGroup.forEach(match => {
+                if (match.baggage.includes('Extra') || match.baggage.includes('Large')) {
+                    totalIndividualCost += individualCosts['SUV/MUV'];
+                } else if (match.baggage.includes('Medium')) {
+                    totalIndividualCost += individualCosts['Sedan Car'];
+                } else {
+                    totalIndividualCost += individualCosts['Auto Rickshaw'];
+                }
+            });
+            
+            const costPerPerson = Math.ceil(totalCost / largestGroup.length);
+            const savings = totalIndividualCost - totalCost;
+            
+            return {
+                count: largestGroup.length,
+                vehicle: vehicleType,
+                icon: icon,
+                costPerPerson: costPerPerson,
+                savings: savings,
+                members: largestGroup.map(m => ({name: m.name, phone: m.phone}))
+            };
+        }
+    </script>
+
+<script>
+function matchStudentRequest(studentData, allRides) {
+    const direction = studentData.type;
+    const rideDate = new Date(studentData.date);
+    const rideTime = studentData.time;
+    const flexibility = studentData.flexibility;
+    const pickup = studentData.pickup === "Other" ? studentData.pickup_other : studentData.pickup;
+    const destination = studentData.destination === "Other" ? studentData.destination_other : studentData.destination;
+
+    // Calculate time window
+    const [hour, minute] = rideTime.split(':').map(Number);
+    const rideTimeMinutes = hour * 60 + minute;
+    let flexibilityMinutes = 0;
+    if (flexibility === "±30 minutes") flexibilityMinutes = 30;
+    else if (flexibility === "±1 hour") flexibilityMinutes = 60;
+    else if (flexibility === "±2 hours") flexibilityMinutes = 120;
+    else if (flexibility === "Flexible") flexibilityMinutes = 24 * 60; // All day
+
+    // Match rides
+    const matches = allRides.filter(ride => {
+        if (ride.type !== direction) return false;
+
+        const ridePickup = ride.pickup === "Other" ? ride.pickup_other : ride.pickup;
+        const rideDestination = ride.destination === "Other" ? ride.destination_other : ride.destination;
+
+        if (ride.date !== studentData.date) return false;
+        if (ridePickup !== pickup || rideDestination !== destination) return false;
+
+        const [rHour, rMin] = ride.time.split(':').map(Number);
+        const rideTimeMins = rHour * 60 + rMin;
+
+        return Math.abs(rideTimeMins - rideTimeMinutes) <= flexibilityMinutes;
+    });
+
+    return matches;
+}
+
+// Call this function inside submitRideRequest()
+function findMatchingRides(direction) {
+    const data = {
+        type: direction === 'to-nitc' ? 'To NITC' : 'From NITC',
+        pickup: document.getElementById(direction === 'to-nitc' ? 'toPickup' : 'fromPickup').value,
+        pickup_other: direction === 'to-nitc' 
+            ? (document.getElementById('toPickup').value === 'Other' ? document.getElementById('toOtherPickup').value : '') 
+            : (document.getElementById('fromPickup').value === 'Other' ? document.getElementById('fromOtherPickup').value : ''),
+        destination: document.getElementById(direction === 'to-nitc' ? 'toDestination' : 'fromDestination').value,
+        destination_other: direction === 'to-nitc' 
+            ? (document.getElementById('toDestination').value === 'Other' ? document.getElementById('toOtherDestination').value : '') 
+            : (document.getElementById('fromDestination').value === 'Other' ? document.getElementById('fromOtherDestination').value : ''),
+        date: document.getElementById(direction === 'to-nitc' ? 'toDate' : 'fromDate').value,
+        time: document.getElementById(direction === 'to-nitc' ? 'toTime' : 'fromTime').value,
+        flexibility: document.getElementById(direction === 'to-nitc' ? 'toFlexibility' : 'fromFlexibility').value
+    };
+
+    // Replace with actual ride data source
+    fetch('https://sheetdb.io/api/v1/oe300tfgwpwxw')
+        .then(res => res.json())
+        .then(allRides => {
+            const matched = matchStudentRequest(data, allRides);
+
+            const resultsDiv = document.getElementById(direction === 'to-nitc' ? 'toMatchesList' : 'fromMatchesList');
+            resultsDiv.innerHTML = matched.length === 0
+                ? '<p>No suitable matches found based on your preferences.</p>'
+                : matched.map(ride => `
+                    <div class="card match-card p-3 mb-3">
+                        <h5>${ride.name} (${ride.year}, ${ride.gender})</h5>
+                        <p><strong>Pickup:</strong> ${ride.pickup}</p>
+                        <p><strong>Destination:</strong> ${ride.destination}</p>
+                        <p><strong>Date/Time:</strong> ${ride.date} @ ${ride.time}</p>
+                        <p><strong>Baggage:</strong> ${ride.baggage}</p>
+                    </div>
+                `).join('');
+        });
+}
+</script>
+
+</body>
+</html>
